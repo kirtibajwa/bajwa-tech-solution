@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { site } from "@/config/site";
+import { supabase } from "@/lib/supabase";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -13,31 +14,22 @@ export default function Contact() {
     setSubmitted(false);
 
     const form = new FormData(event.currentTarget);
-    try {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 10000);
-      const response = await fetch("http://localhost:5000/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-        body: JSON.stringify({
-          name: form.get("name"),
-          email: form.get("email"),
-          phone: form.get("phone"),
-          message: form.get("message"),
-          project: "Bajwa Tech Solution",
-        }),
-      });
-      window.clearTimeout(timeout);
+    const lead = {
+      name: String(form.get("name") || "").trim(),
+      email: String(form.get("email") || "").trim(),
+      phone: String(form.get("phone") || "").trim(),
+      message: String(form.get("message") || "").trim(),
+      project: "Bajwa Tech Solution",
+    };
 
-      if (!response.ok) {
-        setError("Your message could not be sent. Please try again.");
-      } else {
-        event.currentTarget.reset();
-        setSubmitted(true);
-      }
-    } catch {
-      setError("Backend is not running. Start the server on port 5000 and try again.");
+    try {
+      const { error: insertError } = await supabase.from("inquiries").insert(lead);
+      if (insertError) throw insertError;
+      event.currentTarget.reset();
+      setSubmitted(true);
+    } catch (submissionError) {
+      console.error("Could not save inquiry:", submissionError);
+      setError("Your message could not be sent. Please try again or contact us on WhatsApp.");
     } finally {
       setSending(false);
     }
@@ -73,38 +65,14 @@ export default function Contact() {
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(245,165,36,0.5)"; e.currentTarget.style.background = "rgba(245,165,36,0.06)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
           >
-            <div
-              className="icon"
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 10,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(245,165,36,0.18)",
-                color: "var(--amber)",
-                fontSize: "1.3rem",
-              }}
-            >
+            <div className="icon" style={{ width: 46, height: 46, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,165,36,0.18)", color: "var(--amber)", fontSize: "1.3rem" }}>
               ✉
             </div>
             <h3 style={{ color: "#fff", fontSize: "1.1rem" }}>Email</h3>
             <p style={{ color: "rgba(255,255,255,0.65)", margin: 0, fontSize: "0.92rem" }}>
               Prefer email? Write to us with your requirements and we'll get back to you.
             </p>
-            <span
-              className="link"
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: "0.92rem",
-                color: "#fff",
-                textDecoration: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.3)",
-                width: "fit-content",
-                paddingBottom: "2px",
-              }}
-            >
+            <span className="link" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.92rem", color: "#fff", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.3)", width: "fit-content", paddingBottom: "2px" }}>
               {site.emailLabel}
             </span>
           </a>
