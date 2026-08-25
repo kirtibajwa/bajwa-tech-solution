@@ -23,7 +23,7 @@ export default function Contact() {
     };
 
     try {
-      const { error: insertError } = await supabase.from("inquiries").insert(lead);
+      const { error: insertError } = await supabase.from("leads").insert(lead);
       if (insertError) throw insertError;
       event.currentTarget.reset();
       setSubmitted(true);
@@ -43,40 +43,15 @@ export default function Contact() {
           <h2 style={{ color: "#fff" }}>{site.contact.title}</h2>
           <p style={{ color: "rgba(255,255,255,0.65)" }}>{site.contact.lede}</p>
         </div>
-
         <div className="contact-layout">
-          <a
-            href={site.emailUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="contact-card mail"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "var(--radius)",
-              padding: "28px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "14px",
-              textDecoration: "none",
-              color: "#fff",
-              transition: "border-color 0.15s ease, background 0.15s ease",
-            }}
+          <a href={site.emailUrl} target="_blank" rel="noopener noreferrer" className="contact-card mail" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius)", padding: "28px", display: "flex", flexDirection: "column", gap: "14px", textDecoration: "none", color: "#fff", transition: "border-color 0.15s ease, background 0.15s ease" }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(245,165,36,0.5)"; e.currentTarget.style.background = "rgba(245,165,36,0.06)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
-          >
-            <div className="icon" style={{ width: 46, height: 46, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,165,36,0.18)", color: "var(--amber)", fontSize: "1.3rem" }}>
-              ✉
-            </div>
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}>
+            <div className="icon" style={{ width: 46, height: 46, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,165,36,0.18)", color: "var(--amber)", fontSize: "1.3rem" }}>✉</div>
             <h3 style={{ color: "#fff", fontSize: "1.1rem" }}>Email</h3>
-            <p style={{ color: "rgba(255,255,255,0.65)", margin: 0, fontSize: "0.92rem" }}>
-              Prefer email? Write to us with your requirements and we'll get back to you.
-            </p>
-            <span className="link" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.92rem", color: "#fff", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.3)", width: "fit-content", paddingBottom: "2px" }}>
-              {site.emailLabel}
-            </span>
+            <p style={{ color: "rgba(255,255,255,0.65)", margin: 0, fontSize: "0.92rem" }}>Prefer email? Write to us with your requirements and we'll get back to you.</p>
+            <span className="link" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.92rem", color: "#fff", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.3)", width: "fit-content", paddingBottom: "2px" }}>{site.emailLabel}</span>
           </a>
-
           <form className="inquiry-form" onSubmit={handleSubmit}>
             <span className="eyebrow" style={{ color: "var(--amber)" }}>Send a message</span>
             <h3 style={{ color: "#fff", fontSize: "1.4rem" }}>Tell us what you need</h3>
@@ -84,12 +59,8 @@ export default function Contact() {
             <label>Email<input name="email" type="email" placeholder="you@example.com" required /></label>
             <label>Mobile number<input name="phone" type="tel" placeholder="Your mobile number" required /></label>
             <label>Message<textarea name="message" placeholder="Tell us about your project" rows={4} required /></label>
-            <button className="btn btn-primary" type="submit" disabled={sending}>
-              {sending ? "Sending..." : "Send inquiry"}
-            </button>
-            <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp" style={{ justifyContent: "center" }}>
-              Prefer WhatsApp? Chat with us
-            </a>
+            <button className="btn btn-primary" type="submit" disabled={sending}>{sending ? "Sending..." : "Send inquiry"}</button>
+            <a href={site.whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp" style={{ justifyContent: "center" }}>Prefer WhatsApp? Chat with us</a>
             {submitted && <p className="form-success">Thanks, your message has been sent.</p>}
             {error && <p className="form-error">{error}</p>}
           </form>
